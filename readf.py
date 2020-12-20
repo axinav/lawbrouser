@@ -20,19 +20,25 @@ class HtmlParcer(object):
         self.soup=bs(self.content, 'lxml')
 
     def check_type(self):
-    strs=re.search(r'\bСП|ГОСТ|СанПиН', self.soup.title.text, re.M)
-        if strs[0]=="СП":
+        strs=re.search(r'\bСП|ГОСТ|СанПиН', self.soup.title.text, re.M)
+        if strs.group()=="СП":
             self.lawtype='SP'
-        elif strs[0]=="ГОСТ":
+        elif strs.group()=="ГОСТ":
             self.lawtype='GOST'
-        elif strs[0]=="СанПиН":
+        elif strs.group()=="СанПиН":
             self.lawtype='SANPIN'
             
+    def get_name_number(self):
+        if self.lawtype=='SP':
+            self.number=self.soup.find('div', class_="WordSection1")\
+                    .find_all("td")[1]\
+                    .p.b.string
             
 
 
 
 if __name__ == "__main__":
-    html=HtmlParcer("~/coding/lawbrouser/LAW/Urban/Sp18_13330_2011.htm")
+    html=HtmlParcer("/home/alex/coding/lawbrouser/LAW/Urban/Sp18_13330_2011.htm")
     html.check_type()
-    print (html.lawtype)
+    html.get_name_number()
+    print (html.number)
